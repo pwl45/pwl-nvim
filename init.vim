@@ -84,7 +84,7 @@ set wildmode=longest,list,full
 vnoremap . :normal .<CR>
 " Spell-check set to <leader>o, 'o' for 'orthography':
 nmap <leader>o :setlocal spell! spelllang=en_us<CR>
-" Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
+" Splits open at the bottom and right, which is non, unlike vim defaults.
 set splitbelow splitright
 
 " MRU shortcut: files recent
