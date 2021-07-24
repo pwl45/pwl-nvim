@@ -19,6 +19,7 @@ let mapleader =" "
 		Plug 'easymotion/vim-easymotion'
 		Plug 'tpope/vim-fugitive'
 		Plug 'jreybert/vimagit'
+		Plug 'flazz/vim-colorschemes'
 
 		" Plug 'vim-syntastic/syntastic'
 		" Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -97,6 +98,8 @@ let mapleader =" "
 " QOL maps to make saving and quitting files easier
 	" (s)ave
 	:nnoremap <leader>ss :update<cr>
+	" (s)ave and (q)uit
+	:nnoremap <leader>sq :wq<cr>
 	" (w)rite and (q)uit
 	:nnoremap <leader>wq :wq<cr>
 	" (q)uit
@@ -132,6 +135,7 @@ let mapleader =" "
 
 	augroup savecmds:
 		autocmd!
+		" autocmd BufWritePost *sxhkdrc !killall sxhkd; setsid sxhkd &
 		" TODO: Break this out into a function, save original cursor position with a mark and go back. 
 		" autocmd BufWritePre * %s/\s\+$//e
 		" autocmd BufWritePre * %s/\n\+\%$//e
@@ -185,3 +189,8 @@ endif
 	set statusline+=%{FugitiveStatusline()}
 	" set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
+
+nnoremap <leader>cs :colorscheme<space>
+" Cool colorschemes: 
+	" 256_noir: dark and scary
+	
