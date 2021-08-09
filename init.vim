@@ -22,6 +22,7 @@ let mapleader =" "
 		Plug 'flazz/vim-colorschemes'
 		Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 		Plug 'junegunn/fzf.vim'
+		Plug 'airblade/vim-rooter'
 		" Plug 'vim-syntastic/syntastic'
 		" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 		" Plug 'osyo-manga/vim-over'
@@ -73,8 +74,8 @@ let mapleader =" "
 	nnoremap L $
 	" make capital Y behave like capital C, capital D, etc. 
 	nnoremap Y y$
-	nnoremap e b
-	nnoremap E B
+	" nnoremap e b
+	" nnoremap E B
 	nnoremap c "_c
 
 	" (S)ubstitute
@@ -113,7 +114,9 @@ let mapleader =" "
 	" (m)a(g)it shortcut:
 	nmap <leader>mg :Magit<CR>
 	" MRU shortcut: (f)iles (r)ecent
-	nmap <leader>fr :MRU<CR>
+	nmap <leader>mr :MRU<CR>
+	nmap <leader>ff :Files<CR>
+	nmap <leader>fr :Rg<CR>
 	" (n)erd tree
 	nmap <leader>n :NERDTreeToggle<CR>
 
