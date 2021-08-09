@@ -36,6 +36,7 @@ let mapleader =" "
 		set mouse=a
 		set nohlsearch
 		set clipboard+=unnamedplus
+		" set hidden
 		set showmode
 		set ruler
 		set laststatus=2
@@ -77,6 +78,9 @@ let mapleader =" "
 	" nnoremap e b
 	" nnoremap E B
 	nnoremap c "_c
+
+	vnoremap < <gv
+	vnoremap > <gv
 
 	" (S)ubstitute
 	nnoremap S :%s//g<Left><Left>
