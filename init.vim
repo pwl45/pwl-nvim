@@ -20,7 +20,8 @@ let mapleader =" "
 		Plug 'tpope/vim-fugitive'
 		Plug 'jreybert/vimagit'
 		Plug 'flazz/vim-colorschemes'
-
+		Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+		Plug 'junegunn/fzf.vim'
 		" Plug 'vim-syntastic/syntastic'
 		" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 		" Plug 'osyo-manga/vim-over'
