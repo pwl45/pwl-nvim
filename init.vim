@@ -1,6 +1,7 @@
 " let fortune = system('/home/paul/scripts/line-fortunes.sh')
 echo "veni, vidi, vim"
 let mapleader =" "
+
 "Folded by default: Plugin installation, variable settings {{{
 	" plugshit ---------------------- {{{
 		if ! filereadable(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/autoload/plug.vim"'))
@@ -73,29 +74,29 @@ let mapleader =" "
 	nnoremap H ^
 	" capital l for end of line
 	nnoremap L $
-	" make capital Y behave like capital C, capital D, etc. 
+	" make capital Y behave like capital C, capital D, etc.
 	nnoremap Y y$
 	" nnoremap e b
 	" nnoremap E B
 	nnoremap c "_c
 
 	vnoremap < <gv
-	vnoremap > <gv
+	vnoremap > >gv
 
 	" (S)ubstitute
 	nnoremap S :%s//g<Left><Left>
 	" (s)earch (w)hole word
 	nnoremap <leader>sw /\<\><Left><Left>
 
-	" vim-easymotion: 
-	" easymotion-s2: bidirectional search for two characters over multiple lines. 
+	" vim-easymotion:
+	" easymotion-s2: bidirectional search for two characters over multiple lines.
 		nmap s <Plug>(easymotion-s2)
-	" easymotion-sl: bidrectional search for signle char over current line. 
+	" easymotion-sl: bidrectional search for signle char over current line.
 		nmap f <Plug>(easymotion-sl)
-	" easymotion-sl: bidrectional search for signle char over current line. 
+	" easymotion-sl: bidrectional search for signle char over current line.
 		nmap t <Plug>(easymotion-tl)
 
-" Remaps for around/in next/last parentheses. Not very useful, but cool. 
+" Remaps for around/in next/last parentheses. Not very useful, but cool.
 	onoremap in( :<c-u>normal! f(vi(<cr>
 	onoremap in) :<c-u>normal! f(vi(<cr>
 	onoremap an( :<c-u>normal! f(va(<cr>
@@ -110,7 +111,7 @@ let mapleader =" "
 	:nnoremap <leader>wq :wq<cr>
 	" (q)uit
 	:nnoremap <leader>qq :q<cr>
-	" No remap for :q! by default. Accidentally fat-fingering q! on a file you've changed is not something you want to do. 
+	" No remap for :q! by default. Accidentally fat-fingering q! on a file you've changed is not something you want to do.
 
 " Uncategorized leader maps
 	" Spell-check: (o)rthography
@@ -120,9 +121,11 @@ let mapleader =" "
 	" MRU shortcut: (f)iles (r)ecent
 	nmap <leader>mr :MRU<CR>
 	nmap <leader>ff :Files<CR>
+	nmap <leader>F :Files ~<CR>
 	nmap <leader>fr :Rg<CR>
 	" (n)erd tree
 	nmap <leader>n :NERDTreeToggle<CR>
+	nmap <leader>p :!pdflatex %<CR>
 
 " quick maps for editing common config files
 	" (e)dit (v)imrc
@@ -143,8 +146,9 @@ let mapleader =" "
 
 	augroup savecmds:
 		autocmd!
+		autocmd BufWritePost *.tex silent! execute "!pdflatex % >/dev/null 2>&1" | redraw!
 		" autocmd BufWritePost *sxhkdrc !killall sxhkd; setsid sxhkd &
-		" TODO: Break this out into a function, save original cursor position with a mark and go back. 
+		" TODO: Break this out into a function, save original cursor position with a mark and go back.
 		" autocmd BufWritePre * %s/\s\+$//e
 		" autocmd BufWritePre * %s/\n\+\%$//e
 		" autocmd BufWritePre *.[ch] %s/\%$/\r/e
@@ -158,8 +162,10 @@ let mapleader =" "
 
 " Shortcutting split navigation, saving a keypress:
 	nmap <Leader>w <C-w>
+	nmap <Leader>wf :vs<cr>:Files<cr>
+	nmap <Leader>wg :vs<cr>:Files ~<cr>
 
-" Shortcutting file navigation. TODO: Make this better, use projectile or something similar. 
+" Shortcutting file navigation. TODO: Make this better, use projectile or something similar.
 	" (l)ist and switch buffers
 	nmap <Leader>l :ls<CR>:b<space>
 	nmap <Leader>. :e<Space><c-r>=getcwd()<cr>/
@@ -169,6 +175,26 @@ let mapleader =" "
 if &diff
 	highlight! link DiffText MatchParen
 endif
+
+nnoremap <leader>g :set operatorfunc=<SID>GrepOperator<cr>g@
+vnoremap <leader>g :<c-u>call <SID>GrepOperator(visualmode())<cr>
+
+function! s:GrepOperator(type)
+    let saved_unnamed_register = @@
+
+    if a:type ==# 'v'
+        normal! `<v`>y
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+    else
+        return
+    endif
+
+    silent execute "grep! -R " . shellescape(@@) . " ."
+    copen
+
+    let @@ = saved_unnamed_register
+endfunction
 
 " Toggling bottom statusbar: mapped to <leader>h {{{
 	let s:hidden_all = 0
@@ -188,7 +214,7 @@ endif
 		endif
 	endfunction
 	" TODO: <leader>h is far too valuable of binding to waste on this function. C
-	" Change when you find something better for it. 
+	" Change when you find something better for it.
 	nnoremap <leader>h :call ToggleHiddenAll()<CR>
 "}}}
 
@@ -199,6 +225,5 @@ endif
 	set statusline+=%*
 
 nnoremap <leader>cs :colorscheme<space>
-" Cool colorschemes: 
+" Cool colorschemes:
 	" 256_noir: dark and scary
-	
