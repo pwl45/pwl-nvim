@@ -1,6 +1,11 @@
 " let fortune = system('/home/paul/scripts/line-fortunes.sh')
-echo "veni, vidi, vim"
+" echo "veni, vidi, vim"
 let mapleader =" "
+
+" TODO:
+" Give yourself some nice insert mode bindings!"  
+	" EOL, newl, left, right, etc. 
+	" may be challenging with how fucking [REDACTED] terminals are with their six total characters
 
 "Folded by default: Plugin installation, variable settings {{{
 	" plugshit ---------------------- {{{
@@ -24,6 +29,7 @@ let mapleader =" "
 		Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 		Plug 'junegunn/fzf.vim'
 		Plug 'airblade/vim-rooter'
+		Plug 'kana/vim-textobj-user'
 		" Plug 'vim-syntastic/syntastic'
 		" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 		" Plug 'osyo-manga/vim-over'
@@ -48,6 +54,7 @@ let mapleader =" "
 		set smartcase
 		set number relativenumber
 		set encoding=utf-8
+		set shiftwidth=4
 		" Splits open at the bottom and right, which is intuitive, unlike vim defaults.
 		set splitbelow splitright
 		" Enable commandline autocompletion:
@@ -69,7 +76,22 @@ let mapleader =" "
 	" end setting plugin variables}}}
 "}}}
 
+
 " Search and movement remaps
+	"TODO: Make mapping for jumping between functions in (python, java, c)
+	" Use j and k to jump visual lines, not actual lines. 
+	" use gj and gk to do wh
+	nnoremap j gj
+	nnoremap k gk
+	nnoremap gj j
+	nnoremap gk k
+	" Hacky temporary solution for python only: 
+	nnoremap J /^def<space>.*(.*):<cr>
+	nnoremap K ?^def<space>.*(.*):<cr>
+	nnoremap Q K 
+	nnoremap n nzz
+	nnoremap N Nzz
+	nnoremap ^[h w
 	" Use H (capital h) to go to beginning of line
 	nnoremap H ^
 	" capital l for end of line
@@ -79,6 +101,7 @@ let mapleader =" "
 	" nnoremap e b
 	" nnoremap E B
 	nnoremap c "_c
+	nnoremap C "_C
 
 	vnoremap < <gv
 	vnoremap > >gv
@@ -92,19 +115,24 @@ let mapleader =" "
 	" easymotion-s2: bidirectional search for two characters over multiple lines.
 		nmap s <Plug>(easymotion-s2)
 	" easymotion-sl: bidrectional search for signle char over current line.
-		nmap f <Plug>(easymotion-sl)
+		" nnoremap f <Plug>(easymotion-sl) 
+		" This is TERRIBLE for making macros and whatnot
+		" Use only if you're really dumb; find another binding probably.
 	" easymotion-sl: bidrectional search for signle char over current line.
-		nmap t <Plug>(easymotion-tl)
-
+		" nnoremap t <Plug>(easymotion-tl)
+		" This is TERRIBLE for making macros and whatnot
+		" Use only if you're really dumb; find another binding probably.
 " Remaps for around/in next/last parentheses. Not very useful, but cool.
 	onoremap in( :<c-u>normal! f(vi(<cr>
 	onoremap in) :<c-u>normal! f(vi(<cr>
 	onoremap an( :<c-u>normal! f(va(<cr>
 	onoremap an) :<c-u>normal! f(va(<cr>
+	" onoremap <space> :<c-u>normal! f(va(<cr>
 
 " QOL maps to make saving and quitting files easier
 	" (s)ave
 	:nnoremap <leader>ss :update<cr>
+	:vnoremap <leader>ss :<c-u>update<cr>
 	" (s)ave and (q)uit
 	:nnoremap <leader>sq :wq<cr>
 	" (w)rite and (q)uit
@@ -112,6 +140,21 @@ let mapleader =" "
 	" (q)uit
 	:nnoremap <leader>qq :q<cr>
 	" No remap for :q! by default. Accidentally fat-fingering q! on a file you've changed is not something you want to do.
+
+" Remaps for changing until symbols
+" (why do ct<sym> when you can just do c<sym>)
+" TODO: Do more of these without removing existing vim functionality
+" and maybe make it less repetitive. 
+	:nnoremap c<space> cW
+	:nnoremap d<space> dt<space>
+	:nnoremap c. ct.
+	:nnoremap d. dt.
+	:nnoremap c: ct:
+	:nnoremap d: dt:
+	:nnoremap c; ct;
+	:nnoremap d; dt;
+
+
 
 " Uncategorized leader maps
 	" Spell-check: (o)rthography
@@ -130,7 +173,7 @@ let mapleader =" "
 " quick maps for editing common config files
 	" (e)dit (v)imrc
 	:nnoremap <leader>ev :e $MYVIMRC<cr>
-	" (v)split (v)imrc
+	" (v)im (v)ertical (open vimrc in vertical split)
 	:nnoremap <leader>vv :vs $MYVIMRC<cr>
 	" (e)dit (v)imrc
 	:nnoremap <leader>ez :vs $HOME/.zshrc<cr>
@@ -154,10 +197,26 @@ let mapleader =" "
 		" autocmd BufWritePre *.[ch] %s/\%$/\r/e
 	augroup end
 
+	augroup filetype_tmp
+	    autocmd!
+	    " Fold some less interesting stuff
+	    autocmd BufEnter *.tex echo "bryce"
+	    " autocmd BufEnter *.tmp echo "bryce"
+	    autocmd BufEnter *.term :call HideAll()
+	    " autocmd BufEnter *.term norm G
+	augroup end
+
 	augroup filetype_vim
 	    autocmd!
 	    " Fold some less interesting stuff
 	    autocmd FileType vim setlocal foldmethod=marker
+	augroup end
+
+	augroup filteype_c
+	    autocmd!
+	    " Fold some less interesting stuff
+	    autocmd FileType html inoremap ;p printf
+	    autocmd FileType c inoremap ;p printf("\n");<left><left><left><left><left>
 	augroup end
 
 " Shortcutting split navigation, saving a keypress:
@@ -167,7 +226,7 @@ let mapleader =" "
 
 " Shortcutting file navigation. TODO: Make this better, use projectile or something similar.
 	" (l)ist and switch buffers
-	nmap <Leader>l :ls<CR>:b<space>
+	" nmap <Leader>l :ls<CR>:b<space>
 	nmap <Leader>. :e<Space><c-r>=getcwd()<cr>/
 	nmap <Leader>, :e<Space>
 
@@ -225,5 +284,12 @@ endfunction
 	set statusline+=%*
 
 nnoremap <leader>cs :colorscheme<space>
+
+function! HideAll()
+	set noshowmode
+	set noruler
+	set laststatus=0
+	set noshowcmd
+endfunction
 " Cool colorschemes:
 	" 256_noir: dark and scary
