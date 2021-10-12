@@ -1,6 +1,7 @@
 " let fortune = system('/home/paul/scripts/line-fortunes.sh')
 " echo "veni, vidi, vim"
 let mapleader =" "
+let g:python3_host_prog = 'python3.9' 
 
 " TODO:
 " Give yourself some nice insert mode bindings!"  
@@ -17,10 +18,12 @@ let mapleader =" "
 		endif
 
 		call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"'))
+		Plug 'neovim/nvim-lspconfig'
 		Plug 'yegappan/mru'
 		Plug 'tpope/vim-surround'
 		Plug 'preservim/nerdtree'
 		Plug 'bling/vim-airline'
+		Plug 'vim-airline/vim-airline-themes'
 		Plug 'tpope/vim-commentary'
 		Plug 'easymotion/vim-easymotion'
 		Plug 'tpope/vim-fugitive'
@@ -29,7 +32,12 @@ let mapleader =" "
 		Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 		Plug 'junegunn/fzf.vim'
 		Plug 'airblade/vim-rooter'
-		Plug 'kana/vim-textobj-user'
+		" Plug 'kana/vim-textobj-user'
+
+		" coq: its own beast
+		Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+		Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+		Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
 		" Plug 'vim-syntastic/syntastic'
 		" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 		" Plug 'osyo-manga/vim-over'
@@ -59,7 +67,6 @@ let mapleader =" "
 		set splitbelow splitright
 		" Enable commandline autocompletion:
 		set wildmode=longest,list,full
-		colorscheme elflord
 		set nocompatible
 		filetype plugin on
 		syntax on
@@ -68,14 +75,17 @@ let mapleader =" "
 	"Setting plugin variables ------------------- {{{
 		" Necessary for cool symbols in airline statusbar
 		let g:airline_powerline_fonts = 1
-		let g:syntastic_always_populate_loc_list = 1
-		let g:syntastic_auto_loc_list = 1
-		let g:syntastic_check_on_open = 1
-		let g:syntastic_check_on_wq = 0
 		let g:EasyMotion_smartcase = 1
 	" end setting plugin variables}}}
 "}}}
+"let g:python3_host_prog = "python3.9"
 
+"comment both of these if you're running in minimal mode
+source $HOME/.config/nvim/lsp.lua
+source $HOME/.config/nvim/coq-config.vim
+" lua << EOF
+
+" EOF
 
 " Search and movement remaps
 	"TODO: Make mapping for jumping between functions in (python, java, c)
@@ -86,8 +96,8 @@ let mapleader =" "
 	nnoremap gj j
 	nnoremap gk k
 	" Hacky temporary solution for python only: 
-	nnoremap J /^def<space>.*(.*):<cr>
-	nnoremap K ?^def<space>.*(.*):<cr>
+	" nnoremap J /^def<space>.*(.*):<cr>
+	" nnoremap K ?^def<space>.*(.*):<cr>
 	nnoremap Q K 
 	nnoremap n nzz
 	nnoremap N Nzz
@@ -132,13 +142,14 @@ let mapleader =" "
 " QOL maps to make saving and quitting files easier
 	" (s)ave
 	:nnoremap <leader>ss :update<cr>
+	:nnoremap <leader>mm :update<cr>:!make<cr>
 	:vnoremap <leader>ss :<c-u>update<cr>
 	" (s)ave and (q)uit
 	:nnoremap <leader>sq :wq<cr>
 	" (w)rite and (q)uit
 	:nnoremap <leader>wq :wq<cr>
 	" (q)uit
-	:nnoremap <leader>qq :q<cr>
+	:nnoremap <leader>qq :bd<cr>
 	" No remap for :q! by default. Accidentally fat-fingering q! on a file you've changed is not something you want to do.
 
 " Remaps for changing until symbols
@@ -177,6 +188,7 @@ let mapleader =" "
 	:nnoremap <leader>vv :vs $MYVIMRC<cr>
 	" (e)dit (v)imrc
 	:nnoremap <leader>ez :vs $HOME/.zshrc<cr>
+	:nnoremap <leader>cc :!make<cr>
 	" (s)ource (v)imrc
 	:nnoremap <leader>sv :source $MYVIMRC<cr>:AirlineRefresh<cr>
 
@@ -212,11 +224,24 @@ let mapleader =" "
 	    autocmd FileType vim setlocal foldmethod=marker
 	augroup end
 
+	augroup filetype_py
+	    autocmd FileType python inoremap jkp print("")<left><left>
+	    autocmd FileType python inoremap jkf for i in range():<left><left>
+	augroup end
+
 	augroup filteype_c
 	    autocmd!
 	    " Fold some less interesting stuff
-	    autocmd FileType html inoremap ;p printf
-	    autocmd FileType c inoremap ;p printf("\n");<left><left><left><left><left>
+	    autocmd FileType c inoremap jkp printf("\n");<left><left><left><left><left>
+	    autocmd FileType c inoremap jkpp printf("\n");<left><left><left><left><left>
+	    autocmd FileType c inoremap jkpf printf("\n");<left><left><left><left><left>
+	    autocmd FileType c inoremap jkpd printf("%d\n",);<left><left>
+	    autocmd FileType c inoremap jkps printf("%s\n",);<left><left>
+	    autocmd FileType c inoremap jki if(){<CR>}<up><right><right>
+	    autocmd FileType c inoremap jke if(){<CR>}else{<CR>}<up><up><right><right>
+	    autocmd FileType c inoremap jkc if(){<CR>}<up><right><right>
+	    autocmd FileType c inoremap jkf for(int i = 0; i < ; i++){<CR>}<up><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right>
+	    autocmd FileType c inoremap jkj for(int j = 0; j < ; j++){<CR>}<up><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right><right>
 	augroup end
 
 " Shortcutting split navigation, saving a keypress:
@@ -229,12 +254,13 @@ let mapleader =" "
 	" nmap <Leader>l :ls<CR>:b<space>
 	nmap <Leader>. :e<Space><c-r>=getcwd()<cr>/
 	nmap <Leader>, :e<Space>
+	nmap <Leader>bl <c-^>
+	nmap <Leader>bb :Buffers<CR>
 
 " Turns off highlighting on the bits of code that are changed, so the line that is changed is highlighted but the actual text that has changed stands out on the line and is readable.
 if &diff
 	highlight! link DiffText MatchParen
 endif
-
 nnoremap <leader>g :set operatorfunc=<SID>GrepOperator<cr>g@
 vnoremap <leader>g :<c-u>call <SID>GrepOperator(visualmode())<cr>
 
@@ -282,14 +308,27 @@ endfunction
 	set statusline+=%{FugitiveStatusline()}
 	" set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
-
-nnoremap <leader>cs :colorscheme<space>
-
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#fnamemod = ':t'
+	let g:airline_theme='serene'
+	
+nnoremap <C-h> 2<C-w>>
+nnoremap <C-l> 2<C-w><
 function! HideAll()
 	set noshowmode
 	set noruler
 	set laststatus=0
 	set noshowcmd
 endfunction
-" Cool colorschemes:
-	" 256_noir: dark and scary
+" Colorscheme stuff
+    " colorscheme elflord
+    colorscheme desert256
+    nnoremap <leader>cs :colorscheme<space>
+    nnoremap <leader>cd :colorscheme<space><c-r>"<CR>
+    nnoremap <leader>at :AirlineTheme<space>
+    " dracula mode
+    nnoremap <leader>dm :colorscheme<space> 256_noir<cr> :AirlineTheme lucius<cr>
+    " elflord mode
+    nnoremap <leader>em :colorscheme<space> elflord<cr> :AirlineTheme dark<cr>
+
+
