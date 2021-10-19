@@ -87,6 +87,7 @@ source $HOME/.config/nvim/coq-config.vim
 
 " EOF
 
+
 " Search and movement remaps
 	"TODO: Make mapping for jumping between functions in (python, java, c)
 	" Use j and k to jump visual lines, not actual lines. 
@@ -95,24 +96,29 @@ source $HOME/.config/nvim/coq-config.vim
 	nnoremap k gk
 	nnoremap gj j
 	nnoremap gk k
+	nnoremap gr *
 	" Hacky temporary solution for python only: 
 	" nnoremap J /^def<space>.*(.*):<cr>
 	" nnoremap K ?^def<space>.*(.*):<cr>
 	nnoremap Q K 
 	nnoremap n nzz
 	nnoremap N Nzz
-	nnoremap ^[h w
-	" Use H (capital h) to go to beginning of line
+	" inoremap sdf <c-o>A
+	" inoremap fds <c-o>I
+	" utterly disgusting that default vim makes you type shift-6/4 to go to the beginning/end of a line
+	" Use H/L for this instead
 	nnoremap H ^
-	" capital l for end of line
 	nnoremap L $
 	" make capital Y behave like capital C, capital D, etc.
 	nnoremap Y y$
-	" nnoremap e b
-	" nnoremap E B
+
+	"Don't want text I'm removing to be copied
 	nnoremap c "_c
 	nnoremap C "_C
+	vnoremap c "_c
+	vnoremap C "_C
 
+	"keep us in visual mode after in/unindenting text
 	vnoremap < <gv
 	vnoremap > >gv
 
@@ -174,9 +180,10 @@ source $HOME/.config/nvim/coq-config.vim
 	nmap <leader>mg :Magit<CR>
 	" MRU shortcut: (f)iles (r)ecent
 	nmap <leader>mr :MRU<CR>
+	nmap <leader>fr :MRU<CR>
 	nmap <leader>ff :Files<CR>
 	nmap <leader>F :Files ~<CR>
-	nmap <leader>fr :Rg<CR>
+	nmap <leader>fg :Rg<CR>
 	" (n)erd tree
 	nmap <leader>n :NERDTreeToggle<CR>
 	nmap <leader>p :!pdflatex %<CR>
@@ -218,6 +225,11 @@ source $HOME/.config/nvim/coq-config.vim
 	    " autocmd BufEnter *.term norm G
 	augroup end
 
+	augroup filetype_tex
+	    autocmd!
+	    " Fold some less interesting stuff
+	    autocmd FileType vim setlocal foldmethod=marker
+	augroup end
 	augroup filetype_vim
 	    autocmd!
 	    " Fold some less interesting stuff
@@ -321,10 +333,14 @@ function! HideAll()
 	set noshowcmd
 endfunction
 " Colorscheme stuff
-    " colorscheme elflord
-    colorscheme desert256
+
+    " god i love this colorscheme
+    "makes me feel like muad-dib himself
+    colorscheme desert256 
+    " hi Normal guibg=dark ctermbg=none
     nnoremap <leader>cs :colorscheme<space>
     nnoremap <leader>cd :colorscheme<space><c-r>"<CR>
+    nnoremap <leader>sl yy:<c-r>"<CR>
     nnoremap <leader>at :AirlineTheme<space>
     " dracula mode
     nnoremap <leader>dm :colorscheme<space> 256_noir<cr> :AirlineTheme lucius<cr>
